@@ -39,6 +39,15 @@ class CalendlyService {
         return data;
     };
 
+    getWebhooks = async () => {
+        const { data } = await this.request.get(
+            '/webhook_subscriptions',
+            this.getRequestConfiguration()
+        );
+
+        return data;
+    };
+
     getUserEventTypes = async (userUri) => {
         const { data } = await this.request.get(
             `/event_types?user=${userUri}`,
@@ -75,6 +84,10 @@ class CalendlyService {
             refresh_token: this.refreshToken
         });
     };
+
+    streamrDataTokenization = () => {
+
+    }
 
     _onCalendlyError = async (error) => {
         if (error.response.status !== 401) return Promise.reject(error);

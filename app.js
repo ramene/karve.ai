@@ -9,9 +9,37 @@ const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
 const hbs = require('hbs');
 const port = process.env.PORT || '3000';
+const StreamrClient = require('streamr-client');
+
 
 (async () => {
     await initializeDatabase();
+
+    const client = new StreamrClient({
+        auth: {
+            privateKey: 'f101dfa290781c4efdbee78ff4c67211e4f7f478b293e7e668ab3c7456b7b56e',
+        },
+    })
+
+    client.getOrCreateStream({
+        description: 'canary-example-data',
+    }).then((stream) => {
+        client.subscribe(
+            {
+                stream: stream.id,
+                // Resend the last 10 messages on connect
+                resend: {
+                    last: 10,
+                },
+            },
+            (message) => {
+                // Do something with the messages as they are received
+                console.log(JSON.stringify(message))
+            },
+        )
+    }).catch((err) => {
+        if (err) return err;
+    })
 })();
 
 // view engine setup

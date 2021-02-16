@@ -42,6 +42,20 @@ router
         const events = collection.map(formatEventDateTime);
 
         res.render('events', { isLoggedIn: true, events, pagination });
+    })
+    .get('/webhooks', isUserAuthenticated, async (req, res) => {
+        const { access_token, refresh_token, calendly_uid } = req.user;
+        const calendlyService = new CalendlyService(
+            access_token,
+            refresh_token
+        );
+        const {
+            collection,
+            pagination
+        } = await calendlyService.getWebhooks();
+        const events = collection.map(formatEventDateTime);
+
+        res.render('webhooks', { isLoggedIn: true, events, pagination });
     });
 
 module.exports = router;
